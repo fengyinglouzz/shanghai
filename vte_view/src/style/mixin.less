@@ -1,0 +1,147 @@
+@blue: #20a0ff;  
+@bc: #e4e4e4;
+@fc:#fff;
+
+// 背景图片地址和大小
+.bis(@url) { 
+	background-image: url(@url);
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+//定位全屏
+.allcover{
+	position:absolute;
+	top:0;
+	right:0;
+}
+
+//transform上下左右居中
+.ctt {  
+	position: absolute;
+	top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+//定位上下左右居中
+.ctp(@width, @height) {  
+	position: absolute;
+	top: 50%;
+    left: 50%;
+    margin-top: -@height/2;
+    margin-left: -@width/2;
+}
+
+//定位上下居中
+.tb {  
+	position: absolute;
+	top: 50%;
+    transform: translateY(-50%);
+}
+
+//定位左右居中
+.lr {  
+	position: absolute;
+	left: 50%;
+    transform: translateX(-50%);
+}
+
+//宽高
+.wh(@width, @height){
+	width: @width;
+	height: @height;
+}
+
+//字体大小、行高、字体
+.ft(@size, @line-height) {  
+	font-size: @size;
+	line-height:@line-height;
+}
+
+//字体大小，颜色
+.sc(@size, @color){
+	font-size: @size;
+	color: @color;
+}
+
+//flex 布局和 子元素 对其方式
+.fj(@type: space-between){
+	display: flex;
+	justify-content: @type;
+
+}
+
+[class^=el-icon-]{
+    font-size: 13px;
+}
+
+.el-form-item{
+  margin-bottom: 15px;
+}
+
+.el-input__inner{
+	height: 34px;
+}
+
+.noBorderWrap .el-input__inner{
+	border: none;
+}
+
+.scoreHead, .scoreHeadRight{
+	border: 1px solid #324157;
+	text-align: center;
+	padding: 5px 0px;
+	font-size: 14px;
+    margin-right: -1px;
+}
+
+.leftRift{
+	padding: 5px 5px 10px 10px;
+}
+.leftRift .el-checkbox{
+    display: block;
+}
+.leftRift .el-checkbox+.el-checkbox{
+    margin-left: 0px;
+}
+.leftRift .el-checkbox span.el-checkbox__label{
+    word-break: normal;
+    width: auto;
+    display: inline-grid;
+    white-space: pre-line;
+    word-wrap: break-word;
+    overflow: hidden;
+    line-height: 14px;
+ }
+.scoreBottom{
+	border-bottom: 1px solid #324157;
+	width: 100%;
+	margin-bottom: 15px;
+}
+
+.scoreCenter{
+	width: 30%;
+	margin-left: 40%;
+	color: #324157;
+}
+
+.btnRightRift{
+	margin-right: 20px;
+}
+
+.el-table th>.cell{
+	line-height: 18px;
+	text-align: center;
+	padding: 5px;
+}
+.el-dialog--small{
+    width: auto;
+    min-width: 30%;
+}
+.el-checkbox__input.is-disabled+.el-checkbox__label{
+    color: #324157;
+    opacity: 0.7;
+}
+.el-form-item__error{
+    padding-top: 2px;
+}
