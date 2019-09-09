@@ -573,7 +573,12 @@
 	</select>
 	
 	<!-- 其他接口 -->	
-	
+	<!-- 获得入院时间 -->
+	<select id = "queryPatientInHospital" resultType="String" parameterType="map">
+		select info.patient_in_hospital patientInHospital
+				from tb_vte_patient_hospit_info info 
+		WHERE info.patient_hospit_id = #{patientHospitId}
+	</select>
 	
 	<!-- 默认不分页 -->
 	<select id="queryPatientAssessmentInfo" resultType="com.insight.wisehealth.vte.pojo.VtePatientAssessmentPojo" parameterType="map">

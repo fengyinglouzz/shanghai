@@ -15,8 +15,8 @@ if (process.env.NODE_ENV == 'development') {
 }else{
 	baseUrl = 'http://'+window.location.host+'';
     baseImgPath = 'http://'+window.location.host+'img/';
-	//baseUrl = 'http://localhost:8888/VTE';
-	//baseImgPath = 'http://localhost:8080/VTE/img/';
+	// baseUrl = 'http://localhost:8080/VTE';
+	// baseImgPath = 'http://localhost:8080/VTE/img/';
 }
 
 export {

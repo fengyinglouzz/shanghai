@@ -58,6 +58,8 @@ public interface TbVteAssessmentDao {
 	
 	TbVteAssessmentPojo queryVteAssessmentInfo(Map map);
 	
+	String queryPatientInHospital(Map map);
+	
 	VtePatientAssessmentPojo queryPatientAssessmentInfo(Map map);
 	
 	int countAllVteAssessmentForDegree(Map map);

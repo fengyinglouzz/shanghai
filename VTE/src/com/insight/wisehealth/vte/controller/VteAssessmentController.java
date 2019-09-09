@@ -91,11 +91,8 @@ public class VteAssessmentController  {
 		}
 	    return R.ok().put("count", count);
     }
+   // 通用版本历史导出
    /**
-    * 历史导出
-    * @param jsonString
-    * @return
-    */
    @RequestMapping("/vtePatientAssessment/queryListExport")
    public R queryListExport(@RequestParam(value="jsonString",required=false) String  jsonString,@RequestParam("excelStr") String  excelStr ,HttpServletRequest request) {
 	    if(StringUtil.isEmpty(jsonString)){
@@ -133,6 +130,102 @@ public class VteAssessmentController  {
 		
 	    return R.ok(resultMap);
    }
+   **/
+   
+   // 东方 【评分明细导出】
+   @RequestMapping("/vtePatientAssessment/queryListExport")
+   public R queryListExport(@RequestParam(value="jsonString",required=false) String  jsonString,@RequestParam("excelStr") String  excelStr ,HttpServletRequest request, HttpSession httpSession) {
+	    if(StringUtil.isEmpty(jsonString)){
+	    	jsonString = "{}";
+	    }
+   		LoginUserPojo loginUserPojo = (LoginUserPojo)httpSession.getAttribute("loginUserPojo");
+   		List<LoginModelPojo> loginModelPojoList = loginUserPojo.getLoginModelPojoList();
+   	
+	    Map map = JsonUtil.getMapFromJson(jsonString);
+		List list = new ArrayList();
+		Map resultMap = new HashMap();
+		VtePatientAssessmentPojo patientAssessmentPojo = new VtePatientAssessmentPojo();
+   		VteAssessmentAndListPojo assessmentAndListPojo = new VteAssessmentAndListPojo();
+		try {
+			list = vteAssessmentService.queryVteAssessmentAdviceExport(map);
+			List list1 = new ArrayList<>();
+			for(int i = 0; i < list.size(); i++) {
+				Object object = list.get(i);
+				HashMap map2 = (HashMap) list.get(i); 
+				int assessmentId = (int) map2.get("assessmentId");
+		   		map.put("assessmentId", assessmentId);
+		   		map.put("modelName", "assessment");
+				assessmentAndListPojo = vteAssessmentService.queryAssessment(map);
+				String strTotal = " ";
+				if(assessmentAndListPojo == null) {
+					list1.add("");
+				} else {
+					Map<String, List<String>> selectMap = assessmentAndListPojo.getSelectData();
+					for(int j = 1; j <= 5; j++) {
+						if(j == 4) continue;
+						if(selectMap.containsKey(j + "")) {
+							for(String str : selectMap.get(j + "")) {
+								strTotal += str + " |";
+							}
+						}
+					}
+					list1.add(strTotal.substring(0, strTotal.length() - 1));
+				}
+				// 评估明细
+				strTotal = "";
+			}
+			patientAssessmentPojo = vteAssessmentService.queryPatientAssessment(map,loginModelPojoList);
+			// 住院号
+			String patientCode = patientAssessmentPojo.getPatientCode();
+			String patientInHospital = vteAssessmentService.queryPatientInHospital(map);
+			Map map1 = new HashMap();
+			map1.put("姓名", patientAssessmentPojo.getPatientName());
+			map1.put("性别", patientAssessmentPojo.getPatientSex());
+			map1.put("年龄", patientAssessmentPojo.getPatientAge());
+			map1.put("住院号", patientAssessmentPojo.getPatientCode());
+			map1.put("入院时间", patientInHospital);
+			map1.put("科室", patientAssessmentPojo.getPatientDepartment());
+			map1.put("病区", patientAssessmentPojo.getPatientArea());
+			map1.put("评估人", patientAssessmentPojo.getPatientName());
+
+			if(StringUtil.isEmpty(excelStr)){
+				excelStr = ".xlsx";
+			}
+			String templateFilePath = ExportConfig.templateFilePath  + ExportConfig.templateFileInnerPath;
+			List headList = new ArrayList();
+			headList.add("姓名");
+			headList.add("性别");
+			headList.add("年龄");
+			headList.add("住院号");
+			headList.add("入院时间");
+			headList.add("科室");
+			headList.add("病区");
+			headList.add("评估人");
+			
+			headList.add("评估时间");
+			headList.add("风险评估阶段");
+			headList.add("类型");
+			headList.add("项目");
+			headList.add("结果");
+			headList.add("分值");
+
+			headList.add("评估明细");
+
+			String[] cols = {"","","","","","","","" ,"createDt", "assessmentStageExplain", "assessmentTypeExplain", "assessmentItemExplain", "resultExplain", "assessmentScore", "assessmentDetail"};
+			File filePath =outputExcelFile(list, excelStr, templateFilePath, headList, cols, list1, map1);
+			
+			StringBuffer url = request.getRequestURL(); 
+			String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append("/").toString(); 
+			String canonicalPath = filePath.getAbsolutePath();
+			String oldStr = ExportConfig.templateFilePath;
+			resultMap.put("filePath", tempContextUrl + canonicalPath.substring(oldStr.length()-1, canonicalPath.length()));
+			System.out.println(tempContextUrl + canonicalPath.substring(oldStr.length()-1, canonicalPath.length()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    return R.ok(resultMap);
+   }
+   
 	/**
 	 * 详情页患者信息及评估
 	 * @param patientHospitId
@@ -325,7 +418,51 @@ public class VteAssessmentController  {
 	    return  queryVteAssessmentInfo;
    }
    
-   
+  // 东方
+  protected File outputExcelFile(List dataList,String excelStr, String templateFilePath,List headList,String[] cols, List list1, Map map1) {
+		//产生一个唯一的路径 防止并发
+		
+		BufferedInputStream bufferInputStream = null;
+		try {
+			
+			File file = new File(templateFilePath);
+			 if (!file.exists()) {
+				 file.mkdirs();
+			 }
+			
+			String createFilePathName = templateFilePath  + DateUtil.getYYYYMMDDHHMMSSDate(new Date()) + excelStr ;
+			// 产生导出文件
+			
+			File downloadFile = new File(createFilePathName);
+			if(".csv".equals(excelStr)){
+				CSVUtils.exportCsv(downloadFile, headList, dataList);
+			}else if (".xlsx".equals(excelStr)){
+				CSVUtils.writeExcel(downloadFile, headList, dataList,cols, map1,list1);
+			}
+			
+			// 设置response的编码方式
+			//response.setContentType("application/x-msdownload");
+			// 写明要下载的文件的大小
+			//response.setContentLength((int) downloadFile.length());
+			// 解决中文乱码
+			//response.setHeader("Content-Disposition", "attachment;filename="
+			//		+ encode(fileName + suffix));
+			bufferInputStream = new BufferedInputStream(new FileInputStream(
+					downloadFile));
+			return downloadFile;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (bufferInputStream != null) {
+				try {
+					bufferInputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
    
   
    

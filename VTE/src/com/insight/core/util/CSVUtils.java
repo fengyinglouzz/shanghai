@@ -242,15 +242,73 @@ public class CSVUtils {
 			Row rowdata = sheet.createRow(i + 1);// 创建数据行
 			Map mapdata = dataList.get(i);
 			for (int j = 0; j < cols.length; j++) {
-//			Iterator it = mapdata.keySet().iterator();
-//			int j = 0;
-//			while (it.hasNext()) {
 				String strdata = String.valueOf(mapdata.get(cols[j]) == null ? "" : mapdata.get(cols[j]));
 				Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
 				celldata.setCellType(Cell.CELL_TYPE_STRING);
 				celldata.setCellValue(strdata);
-//				j++;
-//			}
+			}
+		}
+		OutputStream os = null;
+		try {
+			os = new FileOutputStream(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				os.flush();
+				wb.write(os);
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	// 东方
+	public static void writeExcel(File file, List<String> headList, List<Map> dataList, String[] cols, Map map1, List list1) {
+		// 创建一个新的excel的文档对象
+		SXSSFWorkbook wb = new SXSSFWorkbook(100);
+		// 设置表头样式
+		CellStyle style = getCellStyle(wb);
+		// 在文档对象中创建一个表单..默认是表单名字是Sheet0、Sheet1....
+		Sheet sheet = wb.createSheet();
+		
+		/**
+		 * 设置Excel表的第一行即表头
+		 */
+		Row row = sheet.createRow(0);
+		for (int i = 0; i < headList.size(); i++) {
+			Cell headCell = row.createCell(i);
+			headCell.setCellType(Cell.CELL_TYPE_STRING);// 设置这个单元格的数据的类型,是文本类型还是数字类型
+			headCell.setCellStyle(style);// 设置表头样式
+			headCell.setCellValue(String.valueOf(headList.get(i)));// 给这个单元格设置值
+		}
+		/**
+		 * 写数据
+		 */
+		for (int i = 0; i < dataList.size(); i++) {
+			Row rowdata = sheet.createRow(i + 1);// 创建数据行
+
+			Map mapdata = dataList.get(i);
+			for (int j = 0; j < cols.length; j++) {
+				if(j <= 7) {
+					String strdata = map1.get(headList.get(j)).toString();
+					Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
+					celldata.setCellType(Cell.CELL_TYPE_STRING);
+					celldata.setCellValue(strdata);
+					continue;
+				}
+				if(j == cols.length - 1) {
+					String strdata = list1.get(i).toString();
+					Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
+					celldata.setCellType(Cell.CELL_TYPE_STRING);
+					celldata.setCellValue(strdata);
+					break;
+				}
+				String strdata = String.valueOf(mapdata.get(cols[j]) == null ? "" : mapdata.get(cols[j]));
+				Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
+				celldata.setCellType(Cell.CELL_TYPE_STRING);
+				celldata.setCellValue(strdata);
 			}
 		}
 		OutputStream os = null;

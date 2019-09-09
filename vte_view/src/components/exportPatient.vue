@@ -7,7 +7,7 @@
 		<!-- 预防策略，预防措施 -->
 		<div class="systemRecommendation">基于<el-button type="text" @click="preventionView">预防策略</el-button>，系统根据评估结果推荐：<el-button type="text"  @click="preventionTip">{{assessmentStrategyName}}</el-button></div>
 		<!-- 导出历史记录 -->
-		<el-button class="btnRightRift" @click="exportExcel">导出历史记录</el-button>
+		<el-button class="btnRightRift" @click="exportExcel">评分明细导出</el-button>
 		<!-- 预防策略弹窗 -->
 		<el-dialog title="预防策略" v-model="preventionViewVisible" :close-on-click-modal="false">
 			<img src="../assets/img/preventionView.png">

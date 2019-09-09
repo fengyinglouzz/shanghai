@@ -232,6 +232,11 @@ public class VteAssessmentServiceImpl  implements VteAssessmentService{
 		return tbVteAssessment;
 	}
 	@Override
+	public String queryPatientInHospital(Map map) {
+		String patientInHospital = vteAssessmentMapper.queryPatientInHospital(map);
+		return patientInHospital;
+	}
+	@Override
 	public VtePatientAssessmentPojo queryPatientAssessment(Map map,List<LoginModelPojo> loginAssessmentList) throws Exception{
 		VtePatientAssessmentPojo patientAssessmentPojo =(VtePatientAssessmentPojo)vteAssessmentMapper.queryPatientAssessmentInfo(map);
 		//翻译

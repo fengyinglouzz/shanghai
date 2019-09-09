@@ -62,6 +62,8 @@ public interface VteAssessmentService {
 	 */
 	public List queryVteAssessmentList(Map map) throws Exception;
 	
+
+	public String queryPatientInHospital(Map map);
 	/**
 	 * 查询风险评估(分页)
 	 * 
