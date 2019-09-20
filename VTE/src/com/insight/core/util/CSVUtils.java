@@ -288,7 +288,7 @@ public class CSVUtils {
 		 */
 		for (int i = 0; i < dataList.size(); i++) {
 			Row rowdata = sheet.createRow(i + 1);// 创建数据行
-
+//assessmentTypeExplain // assessmentScore
 			Map mapdata = dataList.get(i);
 			for (int j = 0; j < cols.length; j++) {
 				if(j <= 7) {
@@ -306,9 +306,21 @@ public class CSVUtils {
 					break;
 				}
 				String strdata = String.valueOf(mapdata.get(cols[j]) == null ? "" : mapdata.get(cols[j]));
-				Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
-				celldata.setCellType(Cell.CELL_TYPE_STRING);
-				celldata.setCellValue(strdata);
+				if(j == 13) {
+					if(mapdata.get(cols[11]).equals("外科出血风险评估") || mapdata.get(cols[10]).equals("内科出血风险评估")) {
+						Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
+						celldata.setCellType(Cell.CELL_TYPE_STRING);
+						celldata.setCellValue("");
+					}else {
+						Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
+						celldata.setCellType(Cell.CELL_TYPE_STRING);
+						celldata.setCellValue(strdata);
+					}
+				} else {
+					Cell celldata = rowdata.createCell(j);// 在一行中创建某列..
+					celldata.setCellType(Cell.CELL_TYPE_STRING);
+					celldata.setCellValue(strdata);
+				}
 			}
 		}
 		OutputStream os = null;
